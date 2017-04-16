@@ -1,0 +1,41 @@
+{
+  "name": "Twitter",
+  "apiVersion": "1.1",
+  "baseUrl": "https://demo-api.ig.com/gateway/deal/",
+  "operations": {
+    "Login": {
+      "httpMethod": "POST",
+      "uri": "session",
+      "responseClass": "LoginOutput",
+      "parameters": {
+        "identifier": {
+          "location": "json"
+        },
+        "password": {
+          "location": "json"
+        },
+        "encryptedPassword": {
+          "location": "json",
+          "default": "null"
+        },
+        "apiKey": {
+          "location": "header",
+          "sentAs": "X-IG-API-KEY"
+        },
+        "version": {
+          "location": "header",
+          "sentAs": "Version",
+          "default": "2"
+        }
+      }
+    }
+  },
+  "models": {
+    "LoginOutput": {
+      "type": "object",
+      "additionalProperties": {
+        "location": "json"
+      }
+    }
+  }
+}
