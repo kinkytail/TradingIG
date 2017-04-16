@@ -20,4 +20,4 @@ foreach ($prices as $market) {
     $csv->insertOne($market);
 }
 
-//file_put_contents('dax.csv', $csv->__toString());
+file_put_contents('market.csv', $csv->__toString());

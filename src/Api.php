@@ -121,13 +121,16 @@ class Api
         do {
 
             $result = $this->getMarkets($hierarchyId);
-            foreach ($result["nodes"] as $node) {
-                $stack->push($node["id"]);
+            if($result["nodes"]){
+                foreach ($result["nodes"] as $node) {
+                    $stack->push($node["id"]);
+                }
             }
+
             if($result["markets"]){
                 $retArray = array_merge($retArray, $result["markets"]);
             }
-            sleep(2);
+            sleep(3);
 
 
 
