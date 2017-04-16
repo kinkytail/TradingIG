@@ -2,74 +2,23 @@
 
 namespace Twinsen\TradingIG;
 
-use Guzzle\Service\Command\CommandInterface;
-use Guzzle\Service\Description\ServiceDescription;
-use Guzzle\Service\Client;
-use Guzzle\Service\Resource\ResourceIteratorClassFactory;
+
+use Twinsen\TradingIG\Login\LoginInterface;
 
 class Api
 {
-
+    const DATE_FORMAT = "Y-m-d\TH:i:s";
     /**
-     * @var Client
+     * @var LoginInterface
      */
-    protected $client;
-    protected $apiKey;
-    protected $securityToken;
-    protected $accountId;
+    private $login;
 
-    public function __construct()
+
+    public function __construct(LoginInterface $login)
     {
 
-
-        $path = realpath(dirname(__FILE__));
-        $description = ServiceDescription::factory($path . '/api.json');
-        $this->client = new Client();
-        $this->client->setDescription($description);
-        $resourceIteratorFactory = new ResourceIteratorClassFactory(array(
-            "Twinsen\TradingIG\Iterators"
-        ));
-        $this->client->setResourceIteratorFactory($resourceIteratorFactory);
-
-
+        $this->login = $login;
     }
-
-    /**
-     * @param $login
-     * @param $password
-     * @param $apiKey
-     * @return string
-     */
-    public function getSecurityToken($login, $password, $apiKey)
-    {
-        $command = $this->client->getCommand('Login', array('identifier' => $login, 'password' => $password, "apiKey" => $apiKey));
-        $command->set("command.headers", array("Content-type" => "application/json"));
-        $responseModel = $this->client->execute($command);
-        $securityToken = $responseModel["oauthToken"]["access_token"];
-        return $securityToken;
-    }
-
-    public function login($apiKey, $securityToken, $accountId)
-    {
-        $this->securityToken = $securityToken;
-        $this->apiKey = $apiKey;
-        $this->accountId = $accountId;
-        $command = $this->createCommand('checkSession',array());
-        $retVal = true;
-        try {
-            $responseModel = $this->client->execute($command);
-        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $clientErrorResponseException) {
-            if ($clientErrorResponseException->getResponse()->getStatusCode() == 401) {
-                $retVal = false;
-            } else {
-                throw $clientErrorResponseException;
-            }
-        }
-        return $retVal;
-
-
-    }
-
 
     /**
      * @param $epic string
@@ -81,7 +30,7 @@ class Api
 
 
         $command = $this->createCommand('GetPrices', array('epic' => $epic, 'startDate' => $this->formatDate($startDate), "endDate" => $this->formatDate($endDate)));
-        $iterator = $this->client->getIterator($command);
+        $iterator = $this->login->getClient()->getIterator($command);
         $retArray = array();
         foreach ($iterator as $responseModel) {
             $retArray[] = $responseModel;
@@ -94,22 +43,14 @@ class Api
 
     public function createCommand($commandName, $commandArray)
     {
-        $command = $this->client->getCommand($commandName, $commandArray);
-        $command->set("command.headers", array(
-            "X-IG-API-KEY" => $this->apiKey,
-            "IG-ACCOUNT-ID" => $this->accountId,
-            "Authorization" => "Bearer " . $this->securityToken,
-            //"Version" => "3"
-        ));
+        $command = $this->login->getClient()->getCommand($commandName, $commandArray);
+        $command->set("command.headers", $this->login->getHeaders());
         return $command;
     }
 
     public function getMarkets($hierarchyId)
     {
         $command = $this->createCommand('GetMarkets', array("hierarchyid" => $hierarchyId));
-        //$command->set("command.headers", array(
-        //    "Version" => "1"
-        //));
         $result = $command->execute();
         return $result;
     }
@@ -121,17 +62,16 @@ class Api
         do {
 
             $result = $this->getMarkets($hierarchyId);
-            if($result["nodes"]){
+            if ($result["nodes"]) {
                 foreach ($result["nodes"] as $node) {
                     $stack->push($node["id"]);
                 }
             }
 
-            if($result["markets"]){
+            if ($result["markets"]) {
                 $retArray = array_merge($retArray, $result["markets"]);
             }
             sleep(3);
-
 
 
         } while ($stack->count());
@@ -140,26 +80,5 @@ class Api
         return $retArray;
     }
 
-    protected function formatDate($date)
-    {
-        return $date->format("Y-m-d\TH:i:s");
-    }
 
-    /**
-     * @param $command CommandInterface
-     */
-    protected function debugCommand($command)
-    {
-        $request = $command->getRequest();
-        $response = $command->getResponse();
-        $label = "Debug Output for Command:";
-        $message = $label . PHP_EOL . implode(PHP_EOL, array(
-                '[status code] ' . $response->getStatusCode(),
-                '[reason phrase] ' . $response->getReasonPhrase(),
-                '[url] ' . $request->getUrl(),
-                '[request] ' . (string)$request,
-                '[response] ' . (string)$response
-            ));
-        return $message;
-    }
 }

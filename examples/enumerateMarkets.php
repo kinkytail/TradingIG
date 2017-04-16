@@ -4,13 +4,13 @@ include_once "credentials.php";
 
 use League\Csv\Writer;
 
-$igApi = new Twinsen\TradingIG\Api();
 
-if (!$igApi->login($apiKey, $accessToken, $accountId)) {
-    $accessToken = $igApi->getSecurityToken($login, $password, $apiKey);
+$igLogin = new Twinsen\TradingIG\Login\LoginV2();
+$igLogin->login($login,$password,$apiKey);
 
-    $igApi->login($apiKey, $accessToken, $accountId);
-}
+
+$igApi = new Twinsen\TradingIG\Api($igLogin);
+
 
 
 $csv = Writer::createFromFileObject(new SplTempFileObject());

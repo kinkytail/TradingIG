@@ -4,7 +4,7 @@ include_once "credentials.php";
 
 
 $igApi = new Twinsen\TradingIG\Api();
-$igApi->login($apiKey, $accessToken, $accountId);
+$igApi->loginV3($apiKey, $accessToken, $accountId);
 
 $startDate = DateTime::createFromFormat("d.m.Y H:i:s", '04.04.2017 12:00:00');
 $endDate = clone $startDate;

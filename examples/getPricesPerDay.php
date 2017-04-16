@@ -9,7 +9,7 @@ $loginResult = $igApi->getSecurityToken($login, $password, $apiKey);
 
 
 $igApi = new Twinsen\TradingIG\Api();
-$igApi->login($apiKey, $loginResult["oauthToken"]["access_token"], $accountId);
+$igApi->loginV3($apiKey, $loginResult["oauthToken"]["access_token"], $accountId);
 
 $startDate = DateTime::createFromFormat("d.m.Y H:i:s", '04.04.2017 00:00:00');
 $endDate = clone $startDate;
