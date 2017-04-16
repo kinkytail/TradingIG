@@ -59,6 +59,23 @@
           "default": "1"
         }
       }
+    },
+    "GetMarkets": {
+      "httpMethod": "GET",
+      "uri": "marketnavigation/{hierarchyid}",
+      "responseClass": "LoginOutput",
+      "parameters": {
+        "hierarchyid": {
+          "location": "uri"
+        }
+      }
+    },
+    "checkSession": {
+      "httpMethod": "GET",
+      "uri": "session",
+      "responseClass": "LoginOutput",
+      "parameters": {
+      }
     }
   },
   "models": {
