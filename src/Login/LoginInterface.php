@@ -1,7 +1,7 @@
 <?php
 namespace Twinsen\TradingIG\Login;
 
-use Guzzle\Http\Client;
+use Guzzle\Service\Client;
 
 interface LoginInterface
 {

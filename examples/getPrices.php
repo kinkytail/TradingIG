@@ -3,8 +3,11 @@ include_once "../vendor/autoload.php";
 include_once "credentials.php";
 
 
-$igApi = new Twinsen\TradingIG\Api();
-$igApi->loginV3($apiKey, $accessToken, $accountId);
+$igLogin = new Twinsen\TradingIG\Login\LoginV2();
+$igLogin->login($login,$password,$apiKey);
+
+
+$igApi = new Twinsen\TradingIG\Api($igLogin);
 
 $startDate = DateTime::createFromFormat("d.m.Y H:i:s", '04.04.2017 12:00:00');
 $endDate = clone $startDate;

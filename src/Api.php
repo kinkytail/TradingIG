@@ -29,7 +29,12 @@ class Api
     {
 
 
-        $command = $this->createCommand('GetPrices', array('epic' => $epic, 'startDate' => $this->formatDate($startDate), "endDate" => $this->formatDate($endDate)));
+        $command = $this->createCommand('GetPrices',
+            array(
+                'epic' => $epic,
+                'startDate' => $startDate->format(self::DATE_FORMAT),
+                "endDate" => $endDate->format(self::DATE_FORMAT)
+            ));
         $iterator = $this->login->getClient()->getIterator($command);
         $retArray = array();
         foreach ($iterator as $responseModel) {
@@ -41,6 +46,11 @@ class Api
         return $retArray;
     }
 
+    /**
+     * @param $commandName
+     * @param $commandArray
+     * @return \Guzzle\Service\Command\CommandInterface
+     */
     public function createCommand($commandName, $commandArray)
     {
         $command = $this->login->getClient()->getCommand($commandName, $commandArray);
@@ -51,7 +61,8 @@ class Api
     public function getMarkets($hierarchyId)
     {
         $command = $this->createCommand('GetMarkets', array("hierarchyid" => $hierarchyId));
-        $result = $command->execute();
+        $result = $this->login->getClient()->execute($command);
+        echo "Url:" . $command->getRequest()->getUrl() . "\r\n";
         return $result;
     }
 
@@ -59,9 +70,10 @@ class Api
     {
         $retArray = array();
         $stack = new \SplStack();
+        $stack->push($hierarchyId);
         do {
 
-            $result = $this->getMarkets($hierarchyId);
+            $result = $this->getMarkets($stack->pop());
             if ($result["nodes"]) {
                 foreach ($result["nodes"] as $node) {
                     $stack->push($node["id"]);
