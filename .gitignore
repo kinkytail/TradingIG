@@ -47,3 +47,4 @@ fabric.properties
 /login.php
 vendor/*
 /composer.lock
+/examples/credentials.php

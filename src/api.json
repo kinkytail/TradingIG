@@ -14,10 +14,6 @@
         "password": {
           "location": "json"
         },
-        "encryptedPassword": {
-          "location": "json",
-          "default": "null"
-        },
         "apiKey": {
           "location": "header",
           "sentAs": "X-IG-API-KEY"
@@ -25,7 +21,42 @@
         "version": {
           "location": "header",
           "sentAs": "Version",
-          "default": "2"
+          "default": "3"
+        }
+      }
+    },
+    "GetPrices": {
+      "httpMethod": "GET",
+      "uri": "prices/{epic}",
+      "responseClass": "LoginOutput",
+      "parameters": {
+        "epic": {
+          "location": "uri"
+        },
+        "resolution": {
+          "location": "query",
+          "default": "MINUTE_5"
+        },
+        "startDate": {
+          "location": "query",
+          "sentAs": "from"
+        },
+        "endDate": {
+          "location": "query",
+          "sentAs": "to"
+        },
+        "maxPricePoints": {
+          "location": "query",
+          "sentAs": "max",
+          "default": "100"
+        },
+        "pageSize": {
+          "location": "query",
+          "default": "10"
+        },
+        "pageNumber": {
+          "location": "query",
+          "default": "1"
         }
       }
     }
