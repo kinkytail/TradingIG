@@ -5,6 +5,7 @@ namespace Twinsen\TradingIG;
 use Guzzle\Service\Command\CommandInterface;
 use Guzzle\Service\Description\ServiceDescription;
 use Guzzle\Service\Client;
+use Guzzle\Service\Resource\ResourceIteratorClassFactory;
 
 class Api
 {
@@ -25,6 +26,10 @@ class Api
         $description = ServiceDescription::factory($path . '/api.json');
         $this->client = new Client();
         $this->client->setDescription($description);
+        $resourceIteratorFactory = new ResourceIteratorClassFactory(array(
+            "Twinsen\TradingIG\Iterators"
+        ));
+        $this->client->setResourceIteratorFactory($resourceIteratorFactory);
 
 
     }
@@ -58,6 +63,8 @@ class Api
      */
     public function getPrices($epic, $startDate, $endDate)
     {
+
+
         $command = $this->client->getCommand('GetPrices', array('epic' => $epic, 'startDate' => $this->formatDate($startDate), "endDate" => $this->formatDate($endDate)));
         $command->set("command.headers", array(
             "X-IG-API-KEY" => $this->apiKey,
@@ -65,9 +72,16 @@ class Api
             "Authorization" => "Bearer " . $this->securityToken,
             "Version" => "3"
         ));
-        $responseModel = $this->client->execute($command);
+
+        $iterator = $this->client->getIterator($command);
+        $retArray = array();
+        foreach ($iterator as $responseModel) {
+            $retArray[] = $responseModel;
+        }
+
+        //$responseModel = $this->client->execute($command);
         //echo $this->debugCommand($command);
-        return $responseModel;
+        return $retArray;
     }
 
     protected function formatDate($date)
