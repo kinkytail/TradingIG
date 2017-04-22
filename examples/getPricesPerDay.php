@@ -4,7 +4,7 @@ include_once "credentials.php";
 
 use League\Csv\Writer;
 
-$igLogin = new Twinsen\TradingIG\Login\LoginV2();
+$igLogin = new Twinsen\TradingIG\Login\LoginV3();
 $igLogin->login($login,$password,$apiKey);
 
 

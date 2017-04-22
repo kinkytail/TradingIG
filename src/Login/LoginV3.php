@@ -1,4 +1,5 @@
 <?php
+
 namespace Twinsen\TradingIG\Login;
 
 
@@ -10,10 +11,13 @@ class LoginV3 extends AbstractLogin implements LoginInterface
 
     public function getHeaders()
     {
-        array(
+        return array(
             "X-IG-API-KEY" => $this->apiKey,
             "IG-ACCOUNT-ID" => $this->accountId,
-            "Authorization" => "Bearer " . $this->securityToken);
+            "Authorization" => "Bearer " . $this->securityToken,
+            "version" => 3
+        );
+
     }
 
     public function renewToken()
@@ -40,7 +44,7 @@ class LoginV3 extends AbstractLogin implements LoginInterface
         $command->set("command.headers", array("Content-type" => "application/json"));
         $responseModel = $this->client->execute($command);
         $securityToken = $responseModel["oauthToken"]["access_token"];
-        $this->securityToken = $apiKey;
+        $this->securityToken = $securityToken;
         $this->apiKey = $apiKey;
         $this->accountId = $responseModel["accountId"];
         return $securityToken;
