@@ -15,8 +15,8 @@ $igApi = new Twinsen\TradingIG\Api($igLogin);
 
 $csv = Writer::createFromFileObject(new SplTempFileObject());
 
-$prices = $igApi->getAllMarkets("600346");
-foreach ($prices as $market) {
+$markets = $igApi->getAllMarkets();
+foreach ($markets as $market) {
     $csv->insertOne($market);
 }
 

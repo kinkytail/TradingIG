@@ -66,7 +66,7 @@ class Api
         return $result;
     }
 
-    public function getAllMarkets($hierarchyId)
+    public function getAllMarkets($hierarchyId = "")
     {
         $retArray = array();
         $stack = new \SplStack();
