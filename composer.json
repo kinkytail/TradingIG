@@ -1,4 +1,8 @@
 {
+  "name":"kinky/tradeig",
+  "type": "library",
+  "description": "SDK for trading IG",
+  "keywords": ["ig","trading"],
   "autoload": {
     "psr-4": {
       "Twinsen\\TradingIG\\": "src/"
